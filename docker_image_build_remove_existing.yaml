@@ -7,13 +7,7 @@
     image_name: "{{ docker_id }}/goorm-myweb"
 
   tasks:
-  - block: 
-    - name: Login to Docker Hub
-      docker_login:
-        username: "{{ docker_id }}"
-        password: "{{ docker_key }}"
-        state: present
-    
+  - block:  
     - name: Remove existing image
       docker_image:
         name: "{{ image_name }}"
@@ -28,10 +22,3 @@
         name: "{{ image_name }}"
         source: build
         force_source: yes
-    
-    always:
-    - name: Logout from Docker Hub
-      docker_login:
-        username: "{{ docker_id }}"
-        state: absent
-
