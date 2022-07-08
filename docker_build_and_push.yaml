@@ -1,12 +1,17 @@
 - hosts: localhost
   gather_facts = no
 
+  vars:
+    docker_id: shk230
+    docker_key: "{{ lookup('env', 'DOCKER_KEY') }}"
+    image_name: "{{ docker_id }}/goorm-myweb"
+
   tasks:
   - block:
     - name: Login to Docker Hub
       docker_login:
-        username: shk230
-        password: "{{ lookup('env','DOCKER_KEY') }}"
+        username: "{{ docker_id }}"
+        password: "{{ docker_key }}"
         state: present
     - name: Image Build with WAR
       docker_image:
@@ -16,15 +21,6 @@
         name: "{{ image_name }}"
         push: yes
         source: build
-    - name: Create/Start Container
-        docker_container:
-          name: "{{ container_name }}"
-          image: "{{ image_name }}"
-          exposed_ports:
-            - "8080:8080"
-          pull: yes
-          recreate: yes
-          state: started
     always:
     - name: Logout to Docker Hub
       docker_login:
