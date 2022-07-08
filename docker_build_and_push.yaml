@@ -1,0 +1,31 @@
+- hosts: localhost
+  gather_facts = no
+
+  tasks:
+  - block:
+    - name: Login to Docker Hub
+      docker_login:
+        username: shk230
+        password: "{{ lookup('env','DOCKER_KEY') }}"
+        state: present
+    - name: Image Build with WAR
+      docker_image:
+        build:
+          path: .
+          #name: shk230/kub_tutorial:tagname
+          push: yes
+          source: build
+    - name: Create/Start Container
+        docker_container:
+          name: ansible_docker_c
+          image: test1
+          exposed_ports:
+            - "8080:8080"
+          pull: yes
+          recreate: yes
+          state: started
+    always:
+    - name: Logout to Docker Hub
+      docker_login:
+        username: shk230
+        state: absent
