@@ -12,13 +12,14 @@
       docker_image:
         build:
           path: .
-          #name: shk230/kub_tutorial:tagname
-          push: yes
-          source: build
+          rm: yes
+        name: "{{ image_name }}"
+        push: yes
+        source: build
     - name: Create/Start Container
         docker_container:
-          name: ansible_docker_c
-          image: test1
+          name: "{{ container_name }}"
+          image: "{{ image_name }}"
           exposed_ports:
             - "8080:8080"
           pull: yes
