@@ -7,13 +7,20 @@
     image_name: "{{ docker_id }}/goorm-myweb"
 
   tasks:
-  - block:
+  - block: 
     - name: Login to Docker Hub
       docker_login:
         username: "{{ docker_id }}"
         password: "{{ docker_key }}"
         state: present
-    - name: Image Build with WAR
+    
+    - name: Remove existing image
+      docker_image:
+        name: "{{ image_name }}"
+        source: local
+        state: absent
+
+    - name: Image build with war
       docker_image:
         build:
           path: .
@@ -21,9 +28,10 @@
         name: "{{ image_name }}"
         source: build
         force_source: yes
-
+    
     always:
-    - name: Logout to Docker Hub
+    - name: Logout from Docker Hub
       docker_login:
-        username: shk230
+        username: "{{ docker_id }}"
         state: absent
+
